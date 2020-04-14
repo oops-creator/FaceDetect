@@ -1,3 +1,4 @@
 vgg_face_weights.h5
 .mypy_cache/
 .vscode/
+__pycache__/

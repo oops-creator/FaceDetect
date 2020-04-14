@@ -4,6 +4,8 @@ from PIL import Image as Img
 import time
 import os
 import threading
+import Recognize
+
 
 
 
@@ -11,10 +13,10 @@ import threading
 
 root = Tk()
 
-
+imgpath = '/home/escanor/Documents/DSP/Facial-Recognition/database/1.jpeg' 
 #Show the original image on left hand side  
 originalImage = ImageTk.PhotoImage(
-                Img.open('/home/escanor/Documents/DSP/Facial-Recognition/database/1.jpeg'))
+                Img.open(imgpath))
 originalSection = Label(root , image=originalImage ,  width=600 , height=600)
 originalSection.grid(row=0,column=0)
 
@@ -32,14 +34,26 @@ dbImages = [os.path.join(currentDir ,relDatabasePath, image) for image in images
 comparingSection = Label(root, width=600 , height=600)
 comparingSection.grid(row=0,column=1)
 
+similarImages = [imgpath]
+relativeImage = None
 
 def changeImage():
+    recognizer = Recognize.Recognize()
+    similarExists = None
     for i in dbImages:
-        time.sleep(0.1)
-        changedImage = ImageTk.PhotoImage(
-                    Img.open(i))
-        print(i)
-        comparingSection.configure(image=changedImage)
+        
+        similarExists = recognizer.verifyFace(imgpath, i)
+        if(len(similarImages) == 1):
+            global relativeImage
+            relativeImage = ImageTk.PhotoImage(Img.open(i))
+            time.sleep(0.1)
+            comparingSection.configure(image=relativeImage)
+    
+        if similarExists:
+            similarImages.append(similarExists) 
+        
+
+    
    
 
 thread = threading.Thread(target=changeImage)

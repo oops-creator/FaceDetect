@@ -14,7 +14,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 class Recognize:
 
     def __init__(self):
-        self.epsilon = .7
+        self.epsilon = .05
         self.mobNet = ModelClass.Models()
         self.mobNet = self.mobNet.getModel()
 
@@ -39,7 +39,7 @@ class Recognize:
         img = self.preprocessnp(img)
         return img
 
-    def findCosineDistance(self, source_representation, test_representation):
+    def findCosineSimilarity(self, source_representation, test_representation):
         a = np.matmul(np.transpose(source_representation), test_representation)
         b = np.sum(np.multiply(source_representation, source_representation))
         c = np.sum(np.multiply(test_representation, test_representation))
@@ -56,7 +56,7 @@ class Recognize:
         img1_representation = self.mobNet.predict(self.preprocessnp(img1))[0, :]
         img2_representation = self.mobNet.predict(self.preprocess(img2url))[0, :]
 
-        cosine_similarity = self.findCosineDistance(
+        cosine_similarity = self.findCosineSimilarity(
             img1_representation, img2_representation)
         euclidean_distance = self.findEuclideanDistance(
             img1_representation, img2_representation)
@@ -72,6 +72,22 @@ class Recognize:
             return True
         else:
             return False
+
+
+    def verifyFace(self, img1url, img2url):
+        img1_representation = self.mobNet.predict(self.preprocess(img1url))[0, :]
+        img2_representation = self.mobNet.predict(self.preprocess(img2url))[0, :]
+
+        cosine_similarity = self.findCosineSimilarity(
+            img1_representation, img2_representation)
+        euclidean_distance = self.findEuclideanDistance(
+            img1_representation, img2_representation)
+
+        if(cosine_similarity < self.epsilon):
+            return img2url
+        else:
+            return None
+
 
     def recognize(self, imgpath):
         face_cascade = cv2.CascadeClassifier(
