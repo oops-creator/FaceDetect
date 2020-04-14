@@ -6,6 +6,9 @@ import os
 import threading
 
 
+
+
+
 root = Tk()
 
 
@@ -17,12 +20,11 @@ originalSection.grid(row=0,column=0)
 
 
 #Get all the images from 'database'
+relDatabasePath = 'database'
 
 currentDir = os.getcwd()
-images = os.listdir(os.path.join(currentDir,'database'))
-dbImages = [os.path.join(currentDir ,'database', image) for image in images]
-
-
+images = os.listdir(os.path.join(currentDir,relDatabasePath))
+dbImages = [os.path.join(currentDir ,relDatabasePath, image) for image in images]
 
 #Show the comparable image on right hand side
 # comparingImage = ImageTk.PhotoImage(
@@ -33,7 +35,7 @@ comparingSection.grid(row=0,column=1)
 
 def changeImage():
     for i in dbImages:
-        time.sleep(1)
+        time.sleep(0.1)
         changedImage = ImageTk.PhotoImage(
                     Img.open(i))
         print(i)
@@ -44,4 +46,11 @@ thread = threading.Thread(target=changeImage)
 thread.start()
 
 
+
+def on_closing():
+    root.destroy()
+    thread._stop()
+    
+
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
