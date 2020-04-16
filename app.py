@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter.filedialog import askopenfilename
 from PIL import ImageTk 
 from PIL import Image as Img
 import time
@@ -13,11 +14,13 @@ import Recognize
 
 root = Tk()
 
-imgpath = '/home/escanor/Documents/DSP/Facial-Recognition/database/1.jpeg' 
+imgpath =  askopenfilename(initialdir = "./",title = "Select file",filetypes = (("jpeg files","*.jpg"),("all files","*.*")))
+
+
 #Show the original image on left hand side  
 originalImage = ImageTk.PhotoImage(
                 Img.open(imgpath))
-originalSection = Label(root , image=originalImage ,  width=600 , height=600)
+originalSection = Label(root , image=originalImage ,  width=600 , height=600 , borderwidth=2 , relief="groove")
 originalSection.grid(row=0,column=0)
 
 
@@ -29,14 +32,13 @@ images = os.listdir(os.path.join(currentDir,relDatabasePath))
 dbImages = [os.path.join(currentDir ,relDatabasePath, image) for image in images]
 
 #Show the comparable image on right hand side
-# comparingImage = ImageTk.PhotoImage(
-#                 Img.open('/home/escanor/Documents/DSP/Facial-Recognition/database/1.jpeg'))
-comparingSection = Label(root, width=600 , height=600)
+comparingSection = Label(root, width=600 , height=600 , borderwidth=2 , relief="groove")
 comparingSection.grid(row=0,column=1)
 
 similarImages = [imgpath]
 relativeImage = None
 
+#Loop through the images in the database folder
 def changeImage():
     recognizer = Recognize.Recognize()
     similarExists = None
@@ -52,7 +54,6 @@ def changeImage():
         if similarExists:
             similarImages.append(similarExists) 
         
-
     
    
 
